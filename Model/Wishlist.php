@@ -77,6 +77,8 @@ class Wishlist
                 /** @var \Magento\Wishlist\Model\Wishlist $wishlist */
                 $wishlist = $this->wishlistFactory->create();
                 $wishlist->loadByCustomerId($customer->getId(), true);
+                //$wishlist->setData(['name'=>$row['name']]);
+                //$wishlist->save();
                 if (!$wishlist->getId()) {
                     continue;
                 }

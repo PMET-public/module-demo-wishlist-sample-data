@@ -109,6 +109,12 @@ class Helper
                 }
             }
             $wishlist->addNewItem($product, $buyRequest, true);
+            $allItems = $wishlist->getItemCollection();
+            foreach($allItems as $item){
+                $Date = "2018-02-21";
+                $item->addData(['added_at'=>date('Y-m-d', strtotime($Date. ' + 1 days'))]);
+                $item->save();
+            }
         }
         if ($shouldSave) {
             $wishlist->save();
