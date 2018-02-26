@@ -9,8 +9,6 @@
     <module name="MagentoEse_DemoWishlistSampleData" setup_version="0.0.1">
         <sequence>
             <module name="Magento_Wishlist"/>
-            <module name="Magento_MultipleWishlist"/>
-            <module name="Magento_WishlistSampleData"/>
             <module name="Magento_Customer"/>
             <module name="Magento_SampleData"/>
             <module name="Magento_CatalogSampleData"/>
@@ -18,7 +16,6 @@
             <module name="Magento_ConfigurableSampleData"/>
             <module name="Magento_GroupedSampleData"/>
             <module name="Magento_GiftCardSampleData"/>
-            <module name="MagentoEse_DemoSampleOrderData"/>
         </sequence>
     </module>
 </config>
