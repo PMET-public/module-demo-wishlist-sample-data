@@ -61,7 +61,6 @@ class Wishlist
 
             $rows = $this->csvReader->getData($fileName);
             $header = array_shift($rows);
-
             foreach ($rows as $row) {
                 $data = [];
                 foreach ($row as $key => $value) {
@@ -77,14 +76,15 @@ class Wishlist
                 /** @var \Magento\Wishlist\Model\Wishlist $wishlist */
                 $wishlist = $this->wishlistFactory->create();
                 $wishlist->loadByCustomerId($customer->getId(), true);
-                //$wishlist->setData(['name'=>$row['name']]);
-                //$wishlist->save();
                 if (!$wishlist->getId()) {
                     continue;
                 }
                 $productSkuList = explode("\n", $row['product_list']);
-                $this->helper->addProductsToWishlist($wishlist, $productSkuList);
+                $productDateList = explode("\n", $row['date_list']);
+                $this->helper->addProductsToWishlist($wishlist, $productSkuList,$productDateList);
+
             }
         }
+        $this->helper->pushDates();
     }
 }

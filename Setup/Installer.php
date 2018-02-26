@@ -27,6 +27,5 @@ class Installer implements Setup\SampleData\InstallerInterface
     public function install()
     {
         $this->wishlist->install(['MagentoEse_DemoWishlistSampleData::fixtures/wishlist.csv']);
-        $f=1;
     }
 }

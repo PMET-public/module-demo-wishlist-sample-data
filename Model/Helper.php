@@ -10,6 +10,9 @@ namespace MagentoEse\DemoWishlistSampleData\Model;
  */
 class Helper
 {
+    private $tableName = 'wishlist_item';
+    private $hourShift = -10;
+
     /**
      * @var \Magento\Customer\Model\CustomerFactory
      */
@@ -31,21 +34,30 @@ class Helper
     protected $storeManager;
 
     /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
+     * Helper constructor.
      * @param \Magento\Customer\Model\CustomerFactory $customerFactory
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      * @param \Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source $productIndexer
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\App\ResourceConnection $resourceConnection
      */
     public function __construct(
         \Magento\Customer\Model\CustomerFactory $customerFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Model\ResourceModel\Product\Indexer\Eav\Source $productIndexer,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\App\ResourceConnection $resourceConnection
     ) {
         $this->customerFactory = $customerFactory;
         $this->productFactory = $productFactory;
         $this->productIndexer = $productIndexer;
         $this->storeManager = $storeManager;
+        $this->resourceConnection = $resourceConnection;
     }
 
     /**
@@ -69,7 +81,7 @@ class Helper
      * @param array $productSkuList
      * @return void
      */
-    public function addProductsToWishlist(\Magento\Wishlist\Model\Wishlist $wishlist, $productSkuList)
+    public function addProductsToWishlist(\Magento\Wishlist\Model\Wishlist $wishlist, $productSkuList,$productDateList)
     {
         $shouldSave = false;
         foreach ($productSkuList as $productSku) {
@@ -109,15 +121,24 @@ class Helper
                 }
             }
             $wishlist->addNewItem($product, $buyRequest, true);
-            $allItems = $wishlist->getItemCollection();
-            foreach($allItems as $item){
-                $Date = "2018-02-21";
-                $item->addData(['added_at'=>date('Y-m-d', strtotime($Date. ' + 1 days'))]);
-                $item->save();
-            }
+        }
+        $allItems = $wishlist->getItemCollection();
+        $i=0;
+        foreach($allItems as $item){
+            $item->addData(['added_at'=>date('Y-m-d', strtotime($productDateList[$i]))]);
+            $item->save();
+            $i++;
         }
         if ($shouldSave) {
             $wishlist->save();
         }
+    }
+    public function pushDates(){
+        $connection = $this->resourceConnection->getConnection();
+        $sql = "select DATEDIFF(now(), max(added_at)) * 24 + EXTRACT(HOUR FROM now()) - EXTRACT(HOUR FROM max(added_at)) -1 as hours from ". $this->tableName;
+        $result = $connection->fetchAll($sql);
+        $dateDiff =  $result[0]['hours']+$this->hourShift;
+        $sql = "update " . $this->tableName . " set added_at =  DATE_ADD(added_at,INTERVAL ".$dateDiff." HOUR)";
+        $connection->query($sql);
     }
 }
