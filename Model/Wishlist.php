@@ -61,6 +61,7 @@ class Wishlist
 
             $rows = $this->csvReader->getData($fileName);
             $header = array_shift($rows);
+
             foreach ($rows as $row) {
                 $data = [];
                 foreach ($row as $key => $value) {
@@ -80,11 +81,8 @@ class Wishlist
                     continue;
                 }
                 $productSkuList = explode("\n", $row['product_list']);
-                $productDateList = explode("\n", $row['date_list']);
-                $this->helper->addProductsToWishlist($wishlist, $productSkuList,$productDateList);
-
+                $this->helper->addProductsToWishlist($wishlist, $productSkuList);
             }
         }
-        $this->helper->pushDates();
     }
 }
